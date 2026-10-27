@@ -84,6 +84,13 @@ export const COMPANY_INFO = {
     whatsappNumber: '96599138629', // Flagged for client verification whether official WhatsApp is active on primary line
     email: 'info@middleeastmariner.com',
     emailHref: 'mailto:info@middleeastmariner.com',
+    responsePromise: 'Enquiries answered within 24 hours on working days. For urgent matters please call.',
+  },
+  // Social profiles: leave a handle empty to hide its icon until confirmed
+  social: {
+    instagram: '',
+    x: '',
+    whatsapp: 'https://wa.me/96599138629',
   },
   hours: {
     days: 'Saturday to Thursday',

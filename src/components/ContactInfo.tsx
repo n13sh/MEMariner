@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Clock, Zap, Instagram, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Zap, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import { COMPANY_INFO } from '../data/marinerData';
 import { Reveal } from '../lib/Reveal';
 import { useI18n } from '../lib/i18n';
@@ -83,6 +83,11 @@ export const ContactInfo: React.FC = () => {
             {social.instagram && (
               <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-11 h-11 rounded-full border border-line bg-white text-ink hover:text-accent hover:border-accent flex items-center justify-center transition-colors">
                 <Instagram className="w-5 h-5" />
+              </a>
+            )}
+            {social.facebook && (
+              <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-11 h-11 rounded-full border border-line bg-white text-ink hover:text-accent hover:border-accent flex items-center justify-center transition-colors">
+                <Facebook className="w-5 h-5" />
               </a>
             )}
             {social.x && (

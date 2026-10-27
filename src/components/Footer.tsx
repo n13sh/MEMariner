@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MessageCircle, Instagram } from 'lucide-react';
+import { Phone, Mail, MessageCircle, Instagram, Facebook } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { COMPANY_INFO, SERVICE_CATEGORIES, RUNNER_BOATS_MODELS } from '../data/marinerData';
 import { useI18n } from '../lib/i18n';
@@ -73,6 +73,9 @@ export const Footer: React.FC = () => {
           <Round href={COMPANY_INFO.contact.emailHref} label="Email"><Mail className="w-5 h-5" /></Round>
           {COMPANY_INFO.social.instagram && (
             <Round href={COMPANY_INFO.social.instagram} label="Instagram" external><Instagram className="w-5 h-5" /></Round>
+          )}
+          {COMPANY_INFO.social.facebook && (
+            <Round href={COMPANY_INFO.social.facebook} label="Facebook" external><Facebook className="w-5 h-5" /></Round>
           )}
           {COMPANY_INFO.social.x && (
             <Round href={COMPANY_INFO.social.x} label="X" external>

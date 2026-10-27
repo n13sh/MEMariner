@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, X, Phone, Languages } from 'lucide-react';
+import { Menu, X, Phone, Languages, MessageCircle, Instagram, Facebook } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { COMPANY_INFO } from '../data/marinerData';
 import { useI18n } from '../lib/i18n';
@@ -235,6 +235,39 @@ export const Header: React.FC<HeaderProps> = ({ onEnquire }) => {
                   <Phone className="w-4 h-4" />
                   <span dir="ltr">{COMPANY_INFO.contact.phoneDisplay}</span>
                 </a>
+                <div className="mt-3 flex items-center gap-2">
+                  <a
+                    href={COMPANY_INFO.social.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 h-11 rounded-[6px] bg-[#25D366] text-white font-medium text-[14px] flex items-center justify-center gap-2 hover:bg-[#1fb257] transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    <span>WhatsApp</span>
+                  </a>
+                  {COMPANY_INFO.social.instagram && (
+                    <a
+                      href={COMPANY_INFO.social.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      className="w-11 h-11 rounded-[6px] border border-line bg-white text-ink hover:text-accent hover:border-accent flex items-center justify-center transition-colors shrink-0"
+                    >
+                      <Instagram className="w-4 h-4" />
+                    </a>
+                  )}
+                  {COMPANY_INFO.social.facebook && (
+                    <a
+                      href={COMPANY_INFO.social.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                      className="w-11 h-11 rounded-[6px] border border-line bg-white text-ink hover:text-accent hover:border-accent flex items-center justify-center transition-colors shrink-0"
+                    >
+                      <Facebook className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
                 <p className="mt-4 text-[14px] text-ink-3">
                   {t('address.full', COMPANY_INFO.location.fullAddress)} · {t('hours.days', COMPANY_INFO.hours.days)}, {t('hours.time', COMPANY_INFO.hours.time)}
                 </p>

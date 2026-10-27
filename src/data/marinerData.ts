@@ -79,18 +79,19 @@ export const COMPANY_INFO = {
     serviceRegion: 'Kuwait & GCC (Gulf Cooperation Council)',
   },
   contact: {
-    phoneDisplay: '+965 9913 8629',
-    phoneHref: 'tel:+96599138629',
-    whatsappNumber: '96599138629', // Flagged for client verification whether official WhatsApp is active on primary line
+    phoneDisplay: '+965 9906 9060',
+    phoneHref: 'tel:+96599069060',
+    whatsappNumber: '96599069060',
     email: 'info@middleeastmariner.com',
     emailHref: 'mailto:info@middleeastmariner.com',
     responsePromise: 'Enquiries answered within 24 hours on working days. For urgent matters please call.',
   },
   // Social profiles: leave a handle empty to hide its icon until confirmed
   social: {
-    instagram: '',
+    instagram: 'https://www.instagram.com/kw_mariner/',
+    facebook: 'https://www.facebook.com/middleeast.mariner/',
     x: '',
-    whatsapp: 'https://wa.me/96599138629',
+    whatsapp: 'https://wa.me/96599069060',
   },
   hours: {
     days: 'Saturday to Thursday',
@@ -386,7 +387,7 @@ export const EXPLODED_SUBSYSTEMS: ExplodedSubsystem[] = [
     relatedServiceIds: ['boat-support', 'engine-servicing', 'mechanical-technical'],
     telemetryMetrics: [
       { label: 'INTERACTION', value: '3D RAYCAST ACTIVE' },
-      { label: 'DIRECT DESK', value: '+965 9913 8629' },
+      { label: 'DIRECT DESK', value: '+965 9906 9060' },
       { label: 'SOURCING', value: 'OEM & TECHNICAL' },
     ],
     colorAccent: '#38BDF8',
@@ -833,7 +834,7 @@ export const FAQ_ITEMS = [
   {
     question: 'What information do you need for an urgent marine breakdown?',
     answer:
-      'For urgent breakdowns, please call +965 9913 8629 directly. Be ready to share your current marina or coastal coordinates, vessel type, engine make/model, and nature of the fault (e.g., loss of propulsion, overheating, electrical failure, or steering loss).',
+      'For urgent breakdowns, please call +965 9906 9060 directly. Be ready to share your current marina or coastal coordinates, vessel type, engine make/model, and nature of the fault (e.g., loss of propulsion, overheating, electrical failure, or steering loss).',
   },
   {
     question: 'Are the Runner Boats models (25 FT to 42 FT) customizable?',

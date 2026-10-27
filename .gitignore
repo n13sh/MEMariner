@@ -25,3 +25,7 @@ dist-ssr
 
 # Raw source footage (not shipped with the site)
 media/
+
+# Vercel
+.vercel
+.vercel

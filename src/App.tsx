@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { VesselExplorer } from './components/VesselExplorer';
 import { Services } from './components/Services';
 import { Parts } from './components/Parts';
 import { Boats } from './components/Boats';
@@ -12,6 +13,7 @@ import { Footer } from './components/Footer';
 import { ContactInfo } from './components/ContactInfo';
 import { WhatsAppButton } from './components/WhatsAppButton';
 import { BackToTop } from './components/BackToTop';
+import { BackgroundMusic } from './components/BackgroundMusic';
 
 export function App() {
   const [enquiryTab, setEnquiryTab] = useState<EnquiryTabType>('spare-parts');
@@ -28,6 +30,7 @@ export function App() {
       <Header onEnquire={() => triggerEnquiry('spare-parts')} />
       <main className="flex-1">
         <Hero onEnquire={triggerEnquiry} />
+        <VesselExplorer onEnquire={triggerEnquiry} />
         <Services onEnquire={triggerEnquiry} />
         <Parts onEnquire={triggerEnquiry} />
         <Boats onEnquire={triggerEnquiry} />
@@ -44,6 +47,7 @@ export function App() {
       <Footer />
       <WhatsAppButton />
       <BackToTop />
+      <BackgroundMusic />
     </div>
   );
 }

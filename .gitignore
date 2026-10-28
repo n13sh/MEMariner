@@ -29,3 +29,6 @@ media/
 # Vercel
 .vercel
 .vercel
+
+# Design reference material (video + source cut-outs), not shipped
+references/

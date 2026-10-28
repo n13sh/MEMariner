@@ -1,207 +1,74 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowRight, Move3d, MousePointerClick } from 'lucide-react';
-import { ExplodedBoatCanvas, PresentationState } from './ExplodedBoatCanvas';
-import { PartSheet } from './PartSheet';
-import { EXPLODED_SUBSYSTEMS } from '../data/marinerData';
+import React from 'react';
 import { useI18n } from '../lib/i18n';
+import { useWordCycle } from '../lib/useWordCycle';
 import type { EnquiryTabType } from './EnquirySection';
 
 interface HeroProps {
   onEnquire: (tab: EnquiryTabType, subject?: string) => void;
 }
 
-const HIGHLIGHTS = [
-  ['hero.h1', 'OEM spare parts'],
-  ['hero.h2', 'Engine servicing'],
-  ['hero.h3', 'On-board surveys'],
-  ['hero.h4', 'Runner Boats 25–42 FT'],
-];
+const WORDS_EN = ['Service', 'Spare Parts'];
 
-const SHORT: Record<string, string> = {
-  'assembled-overview': 'Full vessel',
-  'radar-electronics': 'Electronics & T-top',
-  'twin-propulsion': 'Engines & propellers',
-  'steering-hydraulics': 'Hydraulics & trim',
-  'hvac-auxiliary': 'A/C, fuel & pumps',
-  'hull-fabrication': 'Hull & stringers',
-};
-
-const PIN_LABELS: Record<string, string> = {
-  'radar-electronics': 'Electronics & Radar',
-  'twin-propulsion': 'Engines & Propellers',
-  'steering-hydraulics': 'Hydraulics & Trim',
-  'hvac-auxiliary': 'Marine A/C & Fuel',
-  'hull-fabrication': 'Hull & Stringers',
-  'assembled-overview': 'Deck & Hardware',
-};
-
-export const Hero: React.FC<HeroProps> = ({ onEnquire }) => {
+/**
+ * Hero matched to the reference clip: a dark indigo band (carrying the header)
+ * with a wavy lower edge, a grey-to-navy gradient beneath it, the Kuwait Towers
+ * and a motor-yacht bow as misty cut-outs, a headline whose last word fades in,
+ * holds, then shrinks away, and a white wave at the bottom. Nothing else moves.
+ */
+export const Hero: React.FC<HeroProps> = () => {
   const { t } = useI18n();
-  const presentationRef = useRef<PresentationState>({ yaw: -0.4, explode: 0 });
-  const [explode, setExplode] = useState(0);
-  const [touched, setTouched] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [sheet, setSheet] = useState<string | null>(null);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    let raf = 0;
-    let last = performance.now();
-    const tick = (now: number) => {
-      const dt = (now - last) / 1000;
-      last = now;
-      if (!paused) presentationRef.current.yaw += dt * 0.12;
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [paused]);
-
-  useEffect(() => {
-    presentationRef.current.explode = explode / 100;
-  }, [explode]);
-
-  const openPart = useCallback((id: string) => {
-    setSelected(id);
-    setSheet(id);
-    setPaused(true);
-    setExplode((v) => (v < 35 ? 55 : v));
-  }, []);
-
-  const closeSheet = useCallback(() => {
-    setSheet(null);
-    setPaused(false);
-  }, []);
-
-  const d = (ms: number) => ({ animationDelay: `${ms}ms` });
-  const pinnedSystems = EXPLODED_SUBSYSTEMS.filter((s) => s.id !== 'interactive-inspector');
-  const pinLabels = Object.fromEntries(Object.entries(PIN_LABELS).map(([id, en]) => [id, t(`pin.${id}`, en)]));
+  const words = t('hero.words', WORDS_EN.join('|')).split('|');
+  const { word, phase } = useWordCycle(words);
 
   return (
-    <section id="hero" className="relative bg-white border-b border-line overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -end-[10%] top-[10%] w-[55%] h-[80%] rounded-full opacity-70 blur-3xl will-change-transform"
-        style={{ background: 'radial-gradient(closest-side, #e4f0fa, transparent)' }}
-      />
+    <section id="hero" className="hero-bg font-dm relative overflow-hidden">
+      <div className="relative min-h-[560px] sm:min-h-[640px] lg:min-h-0 lg:aspect-[2/1] isolate">
+        <img src="/assets/hero/towers.webp" alt="" aria-hidden decoding="async" fetchPriority="high" className="hero-towers" />
+        <div aria-hidden className="hero-yacht-shadow" />
+        <img src="/assets/hero/yacht.webp" alt="" aria-hidden decoding="async" fetchPriority="high" className="hero-yacht" />
 
-      <div className="container-x relative py-12 lg:py-[70px] grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        <div>
-          <p className="eyebrow stage-enter" style={d(0)}>
-            {t('hero.eyebrow', 'Boat parts, yacht hardware & marine engineering in Kuwait')}
-          </p>
-          <h1 className="h-hero mt-6 stage-enter" style={d(120)}>
-            {t('hero.title1', 'Trusted Marine Equipment')}
-            <br className="hidden sm:block" /> {t('hero.title2', 'and Services')}
-          </h1>
-          <p className="lead mt-6 max-w-[560px] stage-enter" style={d(240)}>
-            {t(
-              'hero.lead',
-              'Discover quality boat parts, marine engines and yacht hardware sourced from leading manufacturers, with expert servicing and on-board surveys from our workshop in East Ahmadi. Serving Kuwait and the GCC since 2006.'
-            )}
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4 stage-enter" style={d(360)}>
-            <button
-              type="button"
-              onClick={() => onEnquire('spare-parts', 'Marine Parts & Accessories')}
-              className="btn-primary"
-            >
-              <span>{t('hero.cta', 'Enquire now')}</span>
-              <ArrowRight className="w-4 h-4 arrow" />
-            </button>
-            <a href="#services" className="link-caps">
-              <span>{t('hero.services', 'Our services')}</span>
-              <ArrowRight className="w-4 h-4 arrow" />
-            </a>
-          </div>
-          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 stage-enter" style={d(480)}>
-            {HIGHLIGHTS.map(([k, en]) => (
-              <li key={k} className="flex items-center gap-2 text-[14px] text-ink-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                {t(k, en)}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {/* Wave edges traced from the reference clip. On large screens the hero is 2:1 like the
+            clip and both SVGs fill it; below that the same curves keep their proportions by
+            using cropped viewBoxes anchored to the top and bottom. */}
+        <svg aria-hidden className="pointer-events-none absolute inset-0 w-full h-full text-band z-[2] hidden lg:block" viewBox="0 0 960 480" preserveAspectRatio="none">
+          <path fill="currentColor" d="M0.0 144.3C3.4 142.9 13.5 140.2 20.3 136.0C27.0 131.8 33.8 124.7 40.5 119.2C47.3 113.6 54.1 107.7 60.8 102.6C67.6 97.6 74.3 92.9 81.1 88.8C87.9 84.7 94.6 81.0 101.4 78.0C108.1 75.0 114.9 72.6 121.6 70.9C128.4 69.2 135.2 68.2 141.9 68.0C148.7 67.7 155.4 68.2 162.2 69.3C169.0 70.4 175.7 72.4 182.5 74.3C189.2 76.3 196.0 78.7 202.7 81.1C209.5 83.5 216.3 86.3 223.0 88.9C229.8 91.4 236.5 94.3 243.3 96.4C250.1 98.5 256.8 100.2 263.6 101.3C270.3 102.5 277.1 103.4 283.8 103.4C290.6 103.5 297.4 102.5 304.1 101.5C310.9 100.5 317.6 99.0 324.4 97.6C331.2 96.2 337.9 94.5 344.7 93.1C351.4 91.6 358.2 90.1 364.9 89.0C371.7 87.9 378.5 86.7 385.2 86.5C392.0 86.3 398.7 86.6 405.5 87.8C412.2 88.9 419.0 91.0 425.8 93.5C432.5 96.1 439.3 99.5 446.0 103.2C452.8 106.8 459.6 111.2 466.3 115.6C473.1 120.0 479.8 124.7 486.6 129.4C493.3 134.0 500.1 139.0 506.9 143.5C513.6 148.0 520.4 152.5 527.1 156.3C533.9 160.1 540.7 163.7 547.4 166.5C554.2 169.3 560.9 171.5 567.7 173.1C574.4 174.6 581.2 175.3 588.0 175.7C594.7 176.2 601.5 176.0 608.2 175.6C615.0 175.2 621.8 174.3 628.5 173.1C635.3 172.0 642.0 170.4 648.8 168.7C655.5 167.0 662.3 165.0 669.1 163.0C675.8 161.1 682.6 159.0 689.3 156.9C696.1 154.8 702.9 152.7 709.6 150.6C716.4 148.5 723.1 146.3 729.9 144.2C736.6 142.1 743.4 140.0 750.2 137.8C756.9 135.7 763.7 133.6 770.4 131.5C777.2 129.3 783.9 127.1 790.7 125.0C797.5 122.9 804.2 120.7 811.0 118.6C817.7 116.5 824.5 114.3 831.3 112.2C838.0 110.1 844.8 108.1 851.5 106.0C858.3 103.9 865.0 101.8 871.8 99.6C878.6 97.5 885.3 95.3 892.1 93.1C898.8 91.0 905.6 88.9 912.4 86.7C919.1 84.5 925.9 82.0 932.6 80.0C939.4 78.0 948.3 75.7 952.9 74.7C957.5 73.8 958.8 74.2 960.0 74.1V0H0Z" />
+        </svg>
+        <svg aria-hidden className="pointer-events-none absolute top-0 inset-x-0 w-full h-[36%] text-band z-[2] lg:hidden" viewBox="0 0 960 190" preserveAspectRatio="none">
+          <path fill="currentColor" d="M0.0 144.3C3.4 142.9 13.5 140.2 20.3 136.0C27.0 131.8 33.8 124.7 40.5 119.2C47.3 113.6 54.1 107.7 60.8 102.6C67.6 97.6 74.3 92.9 81.1 88.8C87.9 84.7 94.6 81.0 101.4 78.0C108.1 75.0 114.9 72.6 121.6 70.9C128.4 69.2 135.2 68.2 141.9 68.0C148.7 67.7 155.4 68.2 162.2 69.3C169.0 70.4 175.7 72.4 182.5 74.3C189.2 76.3 196.0 78.7 202.7 81.1C209.5 83.5 216.3 86.3 223.0 88.9C229.8 91.4 236.5 94.3 243.3 96.4C250.1 98.5 256.8 100.2 263.6 101.3C270.3 102.5 277.1 103.4 283.8 103.4C290.6 103.5 297.4 102.5 304.1 101.5C310.9 100.5 317.6 99.0 324.4 97.6C331.2 96.2 337.9 94.5 344.7 93.1C351.4 91.6 358.2 90.1 364.9 89.0C371.7 87.9 378.5 86.7 385.2 86.5C392.0 86.3 398.7 86.6 405.5 87.8C412.2 88.9 419.0 91.0 425.8 93.5C432.5 96.1 439.3 99.5 446.0 103.2C452.8 106.8 459.6 111.2 466.3 115.6C473.1 120.0 479.8 124.7 486.6 129.4C493.3 134.0 500.1 139.0 506.9 143.5C513.6 148.0 520.4 152.5 527.1 156.3C533.9 160.1 540.7 163.7 547.4 166.5C554.2 169.3 560.9 171.5 567.7 173.1C574.4 174.6 581.2 175.3 588.0 175.7C594.7 176.2 601.5 176.0 608.2 175.6C615.0 175.2 621.8 174.3 628.5 173.1C635.3 172.0 642.0 170.4 648.8 168.7C655.5 167.0 662.3 165.0 669.1 163.0C675.8 161.1 682.6 159.0 689.3 156.9C696.1 154.8 702.9 152.7 709.6 150.6C716.4 148.5 723.1 146.3 729.9 144.2C736.6 142.1 743.4 140.0 750.2 137.8C756.9 135.7 763.7 133.6 770.4 131.5C777.2 129.3 783.9 127.1 790.7 125.0C797.5 122.9 804.2 120.7 811.0 118.6C817.7 116.5 824.5 114.3 831.3 112.2C838.0 110.1 844.8 108.1 851.5 106.0C858.3 103.9 865.0 101.8 871.8 99.6C878.6 97.5 885.3 95.3 892.1 93.1C898.8 91.0 905.6 88.9 912.4 86.7C919.1 84.5 925.9 82.0 932.6 80.0C939.4 78.0 948.3 75.7 952.9 74.7C957.5 73.8 958.8 74.2 960.0 74.1V0H0Z" />
+        </svg>
+        <svg aria-hidden className="pointer-events-none absolute inset-0 w-full h-full text-white z-[2] hidden lg:block" viewBox="0 0 960 480" preserveAspectRatio="none">
+          <path fill="currentColor" d="M0.0 409.0C4.1 406.4 16.2 399.5 24.3 393.3C32.4 387.0 40.5 378.1 48.7 371.4C56.8 364.7 64.9 358.5 73.0 353.1C81.1 347.6 89.2 342.7 97.3 338.8C105.4 334.9 113.5 331.6 121.6 329.6C129.8 327.6 137.9 326.9 146.0 327.0C154.1 327.1 162.2 328.5 170.3 330.3C178.4 332.1 186.5 334.9 194.6 337.7C202.7 340.6 210.9 344.3 219.0 347.4C227.1 350.5 235.2 353.7 243.3 356.1C251.4 358.6 259.5 360.9 267.6 361.9C275.7 363.0 283.8 363.1 292.0 362.6C300.1 362.1 308.2 360.4 316.3 358.9C324.4 357.4 332.5 355.3 340.6 353.6C348.7 351.9 356.8 350.0 364.9 348.7C373.1 347.5 381.2 345.9 389.3 346.0C397.4 346.1 405.5 347.1 413.6 349.1C421.7 351.2 429.8 354.5 437.9 358.4C446.0 362.3 454.1 367.5 462.3 372.6C470.4 377.7 478.5 383.7 486.6 389.3C494.7 394.8 502.8 400.8 510.9 406.1C519.0 411.3 527.1 416.6 535.2 420.7C543.4 424.8 551.5 428.2 559.6 430.7C567.7 433.1 575.8 434.5 583.9 435.3C592.0 436.1 600.1 436.1 608.2 435.5C616.3 435.0 624.5 433.4 632.6 431.9C640.7 430.3 648.8 428.2 656.9 426.1C665.0 424.0 673.1 421.7 681.2 419.2C689.3 416.7 697.4 413.9 705.6 411.4C713.7 408.9 721.8 406.5 729.9 404.0C738.0 401.5 746.1 398.7 754.2 396.1C762.3 393.5 770.4 391.0 778.5 388.5C786.7 385.9 794.8 383.3 802.9 380.7C811.0 378.2 819.1 375.6 827.2 373.1C835.3 370.6 843.4 368.3 851.5 365.8C859.6 363.3 867.8 360.4 875.9 357.8C884.0 355.2 892.1 353.0 900.2 350.5C908.3 347.9 916.4 345.2 924.5 342.6C932.6 340.0 942.9 336.8 948.8 335.1C954.8 333.5 958.1 333.0 960.0 332.5V480H0Z" />
+        </svg>
+        <svg aria-hidden className="pointer-events-none absolute bottom-0 inset-x-0 w-full h-[34%] text-white z-[2] lg:hidden" viewBox="0 300 960 180" preserveAspectRatio="none">
+          <path fill="currentColor" d="M0.0 409.0C4.1 406.4 16.2 399.5 24.3 393.3C32.4 387.0 40.5 378.1 48.7 371.4C56.8 364.7 64.9 358.5 73.0 353.1C81.1 347.6 89.2 342.7 97.3 338.8C105.4 334.9 113.5 331.6 121.6 329.6C129.8 327.6 137.9 326.9 146.0 327.0C154.1 327.1 162.2 328.5 170.3 330.3C178.4 332.1 186.5 334.9 194.6 337.7C202.7 340.6 210.9 344.3 219.0 347.4C227.1 350.5 235.2 353.7 243.3 356.1C251.4 358.6 259.5 360.9 267.6 361.9C275.7 363.0 283.8 363.1 292.0 362.6C300.1 362.1 308.2 360.4 316.3 358.9C324.4 357.4 332.5 355.3 340.6 353.6C348.7 351.9 356.8 350.0 364.9 348.7C373.1 347.5 381.2 345.9 389.3 346.0C397.4 346.1 405.5 347.1 413.6 349.1C421.7 351.2 429.8 354.5 437.9 358.4C446.0 362.3 454.1 367.5 462.3 372.6C470.4 377.7 478.5 383.7 486.6 389.3C494.7 394.8 502.8 400.8 510.9 406.1C519.0 411.3 527.1 416.6 535.2 420.7C543.4 424.8 551.5 428.2 559.6 430.7C567.7 433.1 575.8 434.5 583.9 435.3C592.0 436.1 600.1 436.1 608.2 435.5C616.3 435.0 624.5 433.4 632.6 431.9C640.7 430.3 648.8 428.2 656.9 426.1C665.0 424.0 673.1 421.7 681.2 419.2C689.3 416.7 697.4 413.9 705.6 411.4C713.7 408.9 721.8 406.5 729.9 404.0C738.0 401.5 746.1 398.7 754.2 396.1C762.3 393.5 770.4 391.0 778.5 388.5C786.7 385.9 794.8 383.3 802.9 380.7C811.0 378.2 819.1 375.6 827.2 373.1C835.3 370.6 843.4 368.3 851.5 365.8C859.6 363.3 867.8 360.4 875.9 357.8C884.0 355.2 892.1 353.0 900.2 350.5C908.3 347.9 916.4 345.2 924.5 342.6C932.6 340.0 942.9 336.8 948.8 335.1C954.8 333.5 958.1 333.0 960.0 332.5V480H0Z" />
+        </svg>
 
-        <div className="stage-enter" style={d(300)}>
-          <div className="float-y will-change-transform">
-            <div
-              className="relative rounded-[8px] overflow-hidden border border-line bg-tint h-[360px] sm:h-[460px] lg:h-[520px] shadow-[0_24px_60px_-30px_rgba(9,44,88,0.35)]"
-              onPointerDown={() => setTouched(true)}
-              dir="ltr"
-            >
-              <ExplodedBoatCanvas
-                theme="light"
-                chromeless
-                showPins
-                pinLabels={pinLabels}
-                presentationRef={presentationRef}
-                scrollProgress={0}
-                activeStageIndex={0}
-                selectedSubsystemId={selected}
-                onSelectSubsystem={openPart}
-                manualExplodeOverride={null}
-                setManualExplodeOverride={() => {}}
-                viewMode="pbr"
-                setViewMode={() => {}}
-              />
-              <div
-                className={`pointer-events-none absolute left-4 top-4 flex flex-col gap-1.5 transition-opacity duration-500 ${
-                  touched ? 'opacity-0' : 'opacity-100'
-                }`}
-              >
-                <span className="inline-flex items-center gap-2 rounded-[4px] bg-white/90 border border-line px-3 py-1.5 text-[12px] font-medium uppercase tracking-[1.5px] text-ink-2">
-                  <Move3d className="w-3.5 h-3.5 text-accent" />
-                  {t('hero.drag', 'Drag to rotate')}
+        <div className="absolute inset-x-0 top-[31%] sm:top-[36%] lg:top-[40%] z-[3]">
+          <div className="container-x">
+            <h1 className="text-white">
+              <span className="block stage-enter text-[24px] sm:text-[30px] lg:text-[36px] font-semibold leading-[1.25]">
+                {t('hero.l1', 'Your Trusted Marine')}
+              </span>
+              <span className="block stage-enter mt-1 text-[28px] sm:text-[34px] lg:text-[40px] font-bold leading-[1.2] min-h-[2.4em] sm:min-h-[1.2em] sm:whitespace-nowrap">
+                {t('hero.l2', 'Partner in')}{' '}
+                <span className={`block sm:inline text-gold whitespace-nowrap word-swap word-${phase}`} aria-hidden>
+                  {word}
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-[4px] bg-white/90 border border-line px-3 py-1.5 text-[12px] font-medium uppercase tracking-[1.5px] text-ink-2">
-                  <MousePointerClick className="w-3.5 h-3.5 text-accent" />
-                  {t('hero.click', 'Click a part for details')}
-                </span>
-              </div>
+                <span className="sr-only">{words.join(', ')}</span>
+              </span>
+            </h1>
+
+            <div className="stage-enter mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <a href="#parts" className="btn-gold">
+                {t('hero.cta1', 'Explore Products')}
+              </a>
+              <a href="#boats" className="text-[14px] font-medium text-white hover:text-gold transition-colors">
+                {t('hero.cta2', 'Boat Shop')}
+              </a>
             </div>
           </div>
-
-          <div className="mt-5 flex items-center gap-4">
-            <span className="text-[13px] font-medium uppercase tracking-[1.5px] text-ink-2 whitespace-nowrap">
-              {t('hero.open', 'Open the vessel')}
-            </span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={explode}
-              onChange={(e) => setExplode(Number(e.target.value))}
-              aria-label={t('hero.open', 'Open the vessel')}
-              className="slider flex-1 cursor-pointer"
-              dir="ltr"
-              style={{ '--pct': `${explode}%` } as React.CSSProperties}
-            />
-            <span className="text-[14px] font-medium tabular-nums w-10 text-end">{explode}%</span>
-          </div>
-
-          <ul className="mt-4 flex flex-wrap gap-2">
-            {pinnedSystems.map((s) => (
-              <li key={s.id}>
-                <button
-                  type="button"
-                  onClick={() => openPart(s.id)}
-                  className={`rounded-[3px] border px-3 py-1.5 text-[12px] font-medium tracking-[0.5px] transition-colors ${
-                    selected === s.id
-                      ? 'bg-accent border-accent text-white'
-                      : 'bg-white border-line text-ink hover:border-accent hover:text-accent'
-                  }`}
-                >
-                  <span dir="ltr">{s.code}</span> · {t(`hero.short.${s.id}`, SHORT[s.id] ?? s.name)}
-                </button>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
-
-      {sheet && <PartSheet subsystemId={sheet} onClose={closeSheet} onEnquire={onEnquire} />}
     </section>
   );
 };

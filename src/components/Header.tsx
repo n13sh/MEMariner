@@ -111,8 +111,8 @@ export const Header: React.FC<HeaderProps> = ({ onEnquire }) => {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-[background-color,box-shadow] duration-300 ${
-        solid ? 'bg-band shadow-[0_4px_24px_rgba(0,0,0,0.25)]' : 'bg-transparent'
+      className={`fixed top-0 inset-x-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
+        solid ? 'bg-band/60 backdrop-blur-md backdrop-saturate-150 shadow-[0_4px_24px_rgba(0,0,0,0.18)]' : 'bg-transparent'
       }`}
     >
       <div

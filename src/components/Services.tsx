@@ -6,9 +6,9 @@ import { useI18n } from '../lib/i18n';
 import type { EnquiryTabType } from './EnquirySection';
 
 /**
- * AI-generated illustrations, one per division, each prompted from the
- * division's own description (generated once with pollinations.ai, fixed seeds,
- * and stored in public/assets/services so the site never depends on the service).
+ * One photograph per division, stored in public/assets/services/<id>.jpg.
+ * Sourced from Pexels (free for commercial use, no attribution required),
+ * cropped to 16:9 at 1600px wide.
  */
 const SERVICE_IMAGES: Record<string, string> = Object.fromEntries(
   SERVICE_CATEGORIES.map((c) => [c.id, `/assets/services/${c.id}.jpg`])

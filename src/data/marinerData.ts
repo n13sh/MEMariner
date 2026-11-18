@@ -88,7 +88,7 @@ export const COMPANY_INFO = {
   },
   // Social profiles: leave a handle empty to hide its icon until confirmed
   social: {
-    instagram: 'https://www.instagram.com/kw_mariner/',
+    instagram: 'https://www.instagram.com/kw.middleeastmariner/',
     facebook: 'https://www.facebook.com/memariner/',
     x: '',
     whatsapp: 'https://wa.me/96599069060',
